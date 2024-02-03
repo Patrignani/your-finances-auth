@@ -11,10 +11,11 @@ type AuthenticateService struct {
 	clientService      interfaces.IClientService
 	userService        interfaces.IUserService
 	refreshTokenSerice interfaces.IRefreshTokenSerice
+	accountServie      interfaces.IAccountService
 }
 
-func NewAuthenticateService(client interfaces.IClientService, user interfaces.IUserService, refresh interfaces.IRefreshTokenSerice) interfaces.IAuthenticateService {
-	return &AuthenticateService{clientService: client, userService: user, refreshTokenSerice: refresh}
+func NewAuthenticateService(client interfaces.IClientService, user interfaces.IUserService, refresh interfaces.IRefreshTokenSerice, account interfaces.IAccountService) interfaces.IAuthenticateService {
+	return &AuthenticateService{clientService: client, userService: user, refreshTokenSerice: refresh, accountServie: account}
 }
 
 func (a *AuthenticateService) ClientCredentialsAuthorization(c echo.Context, client *oauth.OAuthClient) oauth.AuthorizationRolesClient {
@@ -56,12 +57,20 @@ func (a *AuthenticateService) PasswordAuthorization(c echo.Context, pass *oauth.
 		return authorization
 	}
 
+	account, err := a.accountServie.FindByUserId(user.ID)
+
+	if err != nil {
+		authorization.Authorized = false
+		return authorization
+	}
+
 	authorization.Authorized = true
 	authorization.Roles = user.Roles
 	authorization.RefreshToken = refresh.ID
 	authorization.Claims = map[string]string{
 		"uid": user.ID,
 		"cid": clientAuth.ID,
+		"aid": account.AccountId,
 	}
 
 	return authorization

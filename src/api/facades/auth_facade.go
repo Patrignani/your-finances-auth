@@ -26,12 +26,14 @@ func CreateFacade() *AuthFacade {
 	clientRepository := repositories.NewClientRepository(mongoContext)
 	userRepository := repositories.NewUserRepository(mongoContext)
 	refreshTokenRepository := repositories.NewRefreshTokenRepository(mongoContext)
+	accountRepository := repositories.NewAccountRepository(mongoContext)
 
 	//services
 	clientService := services.NewClientService(clientRepository)
 	userService := services.NewUserService(userRepository)
 	refreshTokenService := services.NewRefreshTokenService(refreshTokenRepository)
-	authServices := services.NewAuthenticateService(clientService, userService, refreshTokenService)
+	accountService := services.NewAccountService(accountRepository)
+	authServices := services.NewAuthenticateService(clientService, userService, refreshTokenService, accountService)
 
 	return &AuthFacade{clientService, userService, refreshTokenService, authServices}
 }
