@@ -23,11 +23,21 @@ db.createUser(
     },
   );
 
+  CreateCollection(collections, db, 'accounts')
   CreateCollection(collections, db, 'clients')
   CreateCollection(collections, db, 'roles')
   CreateCollection(collections, db, 'users')
   CreateCollection(collections, db, 'permissions')
   CreateCollection(collections, db, 'refresh_tokens')
+
+
+let userID  = new ObjectId();
+let userID2  = new ObjectId();
+
+//account
+db.accounts.createIndex({user_id:1}, {unique: true});
+db.accounts.createIndex({account_id: 1, user_id:1});
+db.accounts.createIndex({account_id: 1, client_id:1});
 
 //clients index
 db.clients.createIndex({client_id: 1}, {unique: true});
@@ -47,6 +57,20 @@ db.permissions.createIndex({name: 1});
 
 //refresh token index
 db['refresh_tokens'].createIndex({_id: 1, active:1, expiration_date:1});
+
+//account init
+let account ={
+  account_id: "fe10334f-0d25-4217-8d20-85f90c420df3",
+  user_id: userID.toString()
+}
+
+let account2 ={
+  account_id: "8d3610dc-e1cd-4dc2-a780-99779b179812",
+  user_id: userID2.toString()
+}
+
+upsertDocument(db, "accounts", {user_id: account.user_id}, account, dbName);
+upsertDocument(db, "accounts", {user_id: account2.user_id}, account2, dbName);
 
 //clients data initial
 let client = {
@@ -102,6 +126,7 @@ let user = {
 upsertDocument(db, "users", {username: user.username}, user, dbName);
 
 let user2 = {
+    _id: userID,
     username: "Patrignani",
     password: "$2a$10$MPXj2K4cE6RgtUs8Ik1ib.XuV0ZISvv7bv8mf9Rzyte2VjRWl.CWe",
     seed: "ca2f66de4efa454287d4ca1cf989dd31",
@@ -116,6 +141,7 @@ let user2 = {
   upsertDocument(db, "users", {username: user2.username}, user2, dbName);
 
   let user3 = {
+    _id: userID2,
     username: "master",
     password: "$2a$10$Ia.Q0fuOD0GUA8o8Ml8/seMfCJmctG5Xj1qYqBA4EX5LvRwnEolFu",
     seed: "bf3ef5ce40f34a4381b7d27f894191d6",

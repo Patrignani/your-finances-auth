@@ -14,3 +14,5 @@ type Environment struct {
 	JwtExpireTimeMinutes          int    `env:"JWT_EXPIRE,default=15"`
 	JwtKey                        string `env:"JWT_KEY,default=654d30eae2f0496295a2e161e644b31e-06e01c70dd88480c8e07e5e89c1668da-89ddd1301a624dcda4f2da8abc1190f8"`
 }
+
+//mongosh "mongodb+srv://yourfinances.slmnk.mongodb.net/" --apiVersion 1 --username adminApp
