@@ -9,7 +9,7 @@ type Environment struct {
 	MongodbMaxPoolSize            uint64 `env:"MONGO_MAX_POOL_SIZE,default=100"`
 	MongodbMaxConnIdleTine        int    `env:"MONGO_MAX_CONN_IDLE_TIME,default=2"`
 	LogLevel                      string `env:"LOG_LEVEL,default=warn"`
-	RefreshTokenExpireTimeMinutes int    `env:"REFRESH_EXPIRE,default=15"`
+	RefreshTokenExpireTimeMinutes int    `env:"REFRESH_EXPIRE,default=240"`
 	JwtExpireTimeMinutesClient    int    `env:"JWT_EXPIRE_CLIENT,default=3"`
 	JwtExpireTimeMinutes          int    `env:"JWT_EXPIRE,default=15"`
 	JwtKey                        string `env:"JWT_KEY,default=654d30eae2f0496295a2e161e644b31e-06e01c70dd88480c8e07e5e89c1668da-89ddd1301a624dcda4f2da8abc1190f8"`
