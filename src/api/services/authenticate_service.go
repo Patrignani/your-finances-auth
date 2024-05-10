@@ -107,12 +107,21 @@ func (a *AuthenticateService) RefreshTokenCredentialsAuthorization(c echo.Contex
 		authorization.Authorized = false
 		return authorization
 	}
+
+	account, err := a.accountServie.FindByUserId(user.ID)
+
+	if err != nil {
+		authorization.Authorized = false
+		return authorization
+	}
+
 	authorization.Authorized = true
 	authorization.Roles = user.Roles
 	authorization.RefreshToken = refreshT.ID
 	authorization.Claims = map[string]string{
 		"uid": user.ID,
 		"cid": clientAuth.ID,
+		"aid": account.AccountId,
 	}
 
 	return authorization
