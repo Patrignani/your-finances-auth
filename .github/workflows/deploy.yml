@@ -1,0 +1,54 @@
+name: CI/CD Pipeline para GCP Cloud Functions
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.23.2
+
+      - name: Instalar dependências
+        run: go mod tidy
+
+      - name: Compilar aplicação
+        run: |
+          export GO111MODULE=on
+          cd /src/serverless
+          go build -ldflags="-s -w" -o function
+
+      - name: Autenticar no Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+      - name: Configurar Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: seu-projeto-id
+
+      - name: Fazer deploy da Cloud Function
+        run: |
+          gcloud functions deploy your-finances-auth \
+            --gen2
+            --runtime go123 \
+            --entry-point RunAuth \
+            --source src/serverless \
+            --source src/serverless \
+            --trigger-http \
+            --region us-central1 \
+            --memory 256MB \
+            --cpu 1 \
+            --max-instances 3 \
+            --concurrency 5 \
+            --env-vars-file env/.env.qa.yaml
