@@ -25,10 +25,8 @@ jobs:
 
       - name: Compilar aplicação
         run: |
-          export GO111MODULE=on
           cd src/serverless
-          go mod tidy
-          go build -ldflags="-s -w" -o function
+          go mod vendor
 
       - name: Autenticar no Google Cloud
         uses: google-github-actions/auth@v2
