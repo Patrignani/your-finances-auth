@@ -42,13 +42,13 @@ jobs:
       - name: Fazer deploy da Cloud Function
         run: |
           gcloud functions deploy your-finances-auth \
-            --gen2
+            --gen2 \
+            --region us-central1 \
             --runtime go123 \
             --entry-point RunAuth \
             --source src/serverless \
             --source src/serverless \
             --trigger-http \
-            --region us-central1 \
             --memory 256MB \
             --cpu 1 \
             --max-instances 3 \
