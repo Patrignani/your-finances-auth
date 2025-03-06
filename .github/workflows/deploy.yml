@@ -26,7 +26,7 @@ jobs:
       - name: Compilar aplicação
         run: |
           export GO111MODULE=on
-          cd /src/serverless
+          cd src/serverless
           go build -ldflags="-s -w" -o function
 
       - name: Autenticar no Google Cloud
