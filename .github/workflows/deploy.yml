@@ -19,7 +19,9 @@ jobs:
           go-version: 1.23.2
 
       - name: Instalar dependências
-        run: go mod tidy
+        run: |
+          cd src/serverless  # Muda para o diretório onde o código está
+          go mod tidy
 
       - name: Compilar aplicação
         run: |
