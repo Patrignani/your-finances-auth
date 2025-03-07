@@ -20,12 +20,12 @@ jobs:
 
       - name: Instalar dependências
         run: |
-          cd src/serverless 
+          cd src/api 
           go mod tidy
 
       - name: Compilar aplicação
         run: |
-          cd src/serverless
+          cd src/api/serverless
           go build -o function .
 
       - name: Autenticar no Google Cloud
@@ -45,7 +45,7 @@ jobs:
             --region us-central1 \
             --runtime go123 \
             --entry-point RunAuth \
-            --source src/serverless \
+            --source src/api/serverless \
             --trigger-http \
             --memory 256MB \
             --cpu 1 \
