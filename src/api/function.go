@@ -3,8 +3,12 @@ package serverless
 import (
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/functions-framework-go/functions"
+	oauth "github.com/Patrignani/simple-oauth"
+	"github.com/Patrignani/your-finances-auth/src/api/config"
+	"github.com/Patrignani/your-finances-auth/src/api/facades"
 	t "github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -19,60 +23,58 @@ func init() {
 func RunAuth(w http.ResponseWriter, r *http.Request) {
 	log.Println("start RunAuth")
 
-	// authFacade := facades.CreateFacade()
+	authFacade := facades.CreateFacade()
 
-	// options := &oauth.OAuthSimpleOption{
-	// 	Key:                     config.Env.JwtKey,
-	// 	ExpireTimeMinutesClient: config.Env.JwtExpireTimeMinutesClient,
-	// 	ExpireTimeMinutes:       config.Env.JwtExpireTimeMinutes,
-	// 	AuthRouter:              "/auth",
-	// }
+	options := &oauth.OAuthSimpleOption{
+		Key:                     config.Env.JwtKey,
+		ExpireTimeMinutesClient: config.Env.JwtExpireTimeMinutesClient,
+		ExpireTimeMinutes:       config.Env.JwtExpireTimeMinutes,
+		AuthRouter:              "/auth",
+	}
 
-	// authConfigure := &oauth.OAuthConfigure{
-	// 	ClientCredentialsAuthorization:       authFacade.AuthenticateService.ClientCredentialsAuthorization,
-	// 	PasswordAuthorization:                authFacade.AuthenticateService.PasswordAuthorization,
-	// 	RefreshTokenCredentialsAuthorization: authFacade.AuthenticateService.RefreshTokenCredentialsAuthorization,
-	// 	CustomActionRolesMiddleware:          customActionRolesMiddleware,
-	// }
+	authConfigure := &oauth.OAuthConfigure{
+		ClientCredentialsAuthorization:       authFacade.AuthenticateService.ClientCredentialsAuthorization,
+		PasswordAuthorization:                authFacade.AuthenticateService.PasswordAuthorization,
+		RefreshTokenCredentialsAuthorization: authFacade.AuthenticateService.RefreshTokenCredentialsAuthorization,
+		CustomActionRolesMiddleware:          customActionRolesMiddleware,
+	}
 
 	e := echo.New()
 
 	e.Use(middleware.CORS())
 
-	//authRouter := oauth.NewAuthorization(authConfigure, options, e)
+	authRouter := oauth.NewAuthorization(authConfigure, options, e)
 
-	//authRouter.CreateAuthRouter()
+	authRouter.CreateAuthRouter()
 
-	//jwtValidate := authRouter.GetDefaultMiddleWareJwtValidate()
+	jwtValidate := authRouter.GetDefaultMiddleWareJwtValidate()
 
 	e.GET("/health", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Health check passed")
 	})
 
-	// g := e.Group("check-jwt")
-	// g.Use(jwtValidate)
-	// g.GET("", func(c echo.Context) error {
-	// 	id := c.Get("user-id")
-	// 	cid := c.Get("cid")
-	// 	get := c.Get("user")
+	g := e.Group("check-jwt")
+	g.Use(jwtValidate)
+	g.GET("", func(c echo.Context) error {
+		id := c.Get("user-id")
+		cid := c.Get("cid")
+		get := c.Get("user")
 
-	// 	println(cid, id)
+		println(cid, id)
 
-	// 	user := get.(*t.Token)
-	// 	claims := user.Claims.(t.MapClaims)
-	// 	roles := claims["roles"].([]interface{})
+		user := get.(*t.Token)
+		claims := user.Claims.(t.MapClaims)
+		roles := claims["roles"].([]interface{})
 
-	// 	rolesStr := []string{}
-	// 	permissionsStr := []string{}
-	// 	for _, role := range roles {
-	// 		rolesStr = append(rolesStr, role.(string))
-	// 	}
+		rolesStr := []string{}
+		permissionsStr := []string{}
+		for _, role := range roles {
+			rolesStr = append(rolesStr, role.(string))
+		}
 
-	// 	ID := claims["user-id"].(string)
-	// 	return c.String(http.StatusOK, "Id:"+ID+" roles:"+strings.Join(rolesStr, ",")+" permissions:"+strings.Join(permissionsStr, ","))
-	// }, authRouter.RolesMiddleware("10", "5"))
-
-	// e.Logger.Fatal(e.Start(":8001"))
+		ID := claims["user-id"].(string)
+		return c.String(http.StatusOK, "Id:"+ID+" roles:"+strings.Join(rolesStr, ",")+" permissions:"+strings.Join(permissionsStr, ","))
+	}, authRouter.RolesMiddleware("10", "5"))
 
 	e.ServeHTTP(w, r)
 }
