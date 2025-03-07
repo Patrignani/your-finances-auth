@@ -18,28 +18,19 @@ jobs:
         with:
           go-version: 1.23.2
 
-      - name: Instalar dependências
-        run: |
-          cd src/api 
-          go mod tidy
-
       - name: Compilar aplicação
         run: |
-          cd src/api/serverless
-          go build -o ../function .
+          cd src/api/
+          export CGO_ENABLED=0 ; export GO111MODULE=on ; export GOOS=linux ; export GOARCH=amd64 ; go build -v -o your-finances-auth function.go	
 
       - name: Autenticar no Google Cloud
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
-      - name: Configurar Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
-        with:
-          project_id: mineral-actor-221820
-
       - name: Fazer deploy da Cloud Function
         run: |
+          gcloud config set project mineral-actor-221820 \
           gcloud functions deploy your-finances-auth \
             --gen2 \
             --region us-central1 \
