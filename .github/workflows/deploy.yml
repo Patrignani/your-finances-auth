@@ -26,7 +26,7 @@ jobs:
       - name: Compilar aplicação
         run: |
           cd src/api/serverless
-          go build -o function .
+          go build -o ../function .
 
       - name: Autenticar no Google Cloud
         uses: google-github-actions/auth@v2
