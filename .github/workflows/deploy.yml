@@ -18,12 +18,6 @@ jobs:
         with:
           go-version: 1.23.2
 
-      - name: Configurar Go Workspaces
-        run: |
-          cd src
-          go work init
-          go work use ./api ./serverless
-
       - name: Instalar dependências
         run: |
           cd src/serverless 
