@@ -18,15 +18,21 @@ jobs:
         with:
           go-version: 1.23.2
 
+      - name: Configurar Go Workspaces
+        run: |
+          cd src
+          go work init
+          go work use ./api ./serverless
+
       - name: Instalar dependências
         run: |
-          cd src/serverless  # Muda para o diretório onde o código está
+          cd src/serverless 
           go mod tidy
 
       - name: Compilar aplicação
         run: |
           cd src/serverless
-          go work vendor
+          go build -o function .
 
       - name: Autenticar no Google Cloud
         uses: google-github-actions/auth@v2
@@ -36,7 +42,7 @@ jobs:
       - name: Configurar Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
         with:
-          project_id: seu-projeto-id
+          project_id: mineral-actor-221820
 
       - name: Fazer deploy da Cloud Function
         run: |
