@@ -26,7 +26,7 @@ jobs:
       - name: Compilar aplicação
         run: |
           cd src/serverless
-          go mod vendor
+          go work vendor
 
       - name: Autenticar no Google Cloud
         uses: google-github-actions/auth@v2
