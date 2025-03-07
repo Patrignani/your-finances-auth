@@ -45,7 +45,7 @@ jobs:
             --region us-central1 \
             --runtime go123 \
             --entry-point RunAuth \
-            --source src \
+            --source src/serverless \
             --trigger-http \
             --memory 256MB \
             --cpu 1 \
