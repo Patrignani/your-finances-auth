@@ -1,9 +1,6 @@
 name: CI/CD Pipeline para GCP Cloud Functions
 
 on:
-  push:
-    branches:
-      - test-gcp
   workflow_dispatch:
 
 jobs:
