@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - test-gcp
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
@@ -17,6 +18,11 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: 1.23.2
+
+      - name: Compilar aplicação
+        run: |
+          cd src/api/
+          export CGO_ENABLED=0 ; export GO111MODULE=on ; export GOOS=linux ; export GOARCH=amd64 ; go build -v -o your-finances-auth function.go	
 
       - name: Autenticar no Google Cloud
         uses: google-github-actions/auth@v2
