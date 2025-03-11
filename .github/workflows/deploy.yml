@@ -10,6 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
+      - name: Listar todos os arquivos e pastas
+        run: ls -lR
+
       - name: Verificar existência do arquivo de envs
         run: |
           ls -l env/
