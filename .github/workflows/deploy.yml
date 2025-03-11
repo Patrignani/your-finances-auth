@@ -46,4 +46,4 @@ jobs:
             --cpu 1 \
             --max-instances 3 \
             --concurrency 5 \
-            --env-vars-file env/.env.prd.yaml  
+            --env-vars-file env/.env.yaml  
