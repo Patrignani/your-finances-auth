@@ -26,7 +26,7 @@ type MongoDB interface {
 	UpdateMany(ctx context.Context, collName string, selector map[string]interface{}, update interface{}) (*mongo.UpdateResult, error)
 	Remove(ctx context.Context, collName string, query map[string]any) error
 	WithTransaction(ctx context.Context, fn func(context.Context) error) error
-	Initialize(ctx context.Context, dbURI, dbName string, maxPoolSize uint64, MaxConnIdleTime time.Duration) error
+	Initialize(ctx context.Context, dbURI, dbName string, maxPoolSize uint64, MaxConnIdleTime time.Duration, ConnectTimeout time.Duration) error
 	Ping(ctx context.Context) error
 	Disconnect()
 	BulkInsert(ctx context.Context, collName string, models []mongo.WriteModel) (*int64, error)
@@ -51,14 +51,14 @@ func GetInstance() MongoDB {
 	return mongoInstance
 }
 
-func (m *mongodbImpl) Initialize(ctx context.Context, dbURI, dbName string, maxPoolSize uint64, MaxConnIdleTime time.Duration) error {
+func (m *mongodbImpl) Initialize(ctx context.Context, dbURI, dbName string, maxPoolSize uint64, MaxConnIdleTime time.Duration, ConnectTimeout time.Duration) error {
 
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
 	retryWrites := true
 	options := &options.ClientOptions{
 		RetryWrites: &retryWrites,
 	}
-	options = options.ApplyURI(dbURI).SetMaxPoolSize(maxPoolSize).SetMaxConnIdleTime(MaxConnIdleTime).SetServerAPIOptions(serverAPI)
+	options = options.ApplyURI(dbURI).SetMaxPoolSize(maxPoolSize).SetMaxConnIdleTime(MaxConnIdleTime).SetServerAPIOptions(serverAPI).SetConnectTimeout(ConnectTimeout)
 	client, err := mongo.Connect(ctx, options)
 
 	if err != nil {

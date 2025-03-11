@@ -46,7 +46,7 @@ func getMongoContext() data.MongoDB {
 	mongo := data.GetInstance()
 
 	if err := mongo.Initialize(ctx, config.Env.MongodbAddrs,
-		config.Env.MongodbDatabase, config.Env.MongodbMaxPoolSize, time.Duration(config.Env.MongodbMaxConnIdleTine)*time.Minute); err != nil {
+		config.Env.MongodbDatabase, config.Env.MongodbMaxPoolSize, config.Env.MongodbMaxConnIdleTime, config.Env.MongodbConnectTimeout); err != nil {
 		log.Println("Could not resolve Data access layer", err)
 	}
 
