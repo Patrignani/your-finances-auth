@@ -10,6 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Verificar existência do arquivo de envs
+        run: |
+          ls -l env/
+          cat env/.env.yaml
+
+
       - name: Checkout do código
         uses: actions/checkout@v4
 
