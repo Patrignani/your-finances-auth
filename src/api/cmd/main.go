@@ -66,7 +66,7 @@ func main() {
 		return c.String(http.StatusOK, "Id:"+ID+" roles:"+strings.Join(rolesStr, ",")+" permissions:"+strings.Join(permissionsStr, ","))
 	}, authRouter.RolesMiddleware("10", "5"))
 
-	e.Logger.Fatal(e.Start(":8001"))
+	e.Logger.Fatal(e.Start(":8080"))
 }
 
 func customActionRolesMiddleware(c echo.Context, token *t.Token, claims t.MapClaims) error {
