@@ -11,6 +11,12 @@ jobs:
 
     steps:
 
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Listar arquivos após checkout
+        run: ls -l
+
       - name: Listar todos os arquivos e pastas
         run: ls -lR
 
@@ -18,11 +24,7 @@ jobs:
         run: |
           ls -l env/
           cat env/.env.yaml
-
-
-      - name: Checkout do código
-        uses: actions/checkout@v4
-
+  
       - name: Autenticar no Google Cloud
         uses: google-github-actions/auth@v2
         with:
