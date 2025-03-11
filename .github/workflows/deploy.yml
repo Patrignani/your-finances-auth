@@ -3,7 +3,7 @@ name: CI/CD Pipeline para GCP Cloud Functions
 on:
   push:
     branches:
-      - test-gcp
+      - test-gcp-run
 
 jobs:
   build-and-deploy:
@@ -12,16 +12,6 @@ jobs:
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
-
-      - name: Configurar Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: 1.23.2
-
-      - name: Compilar aplicação
-        run: |
-          cd src/api/
-          export CGO_ENABLED=0 ; export GO111MODULE=on ; export GOOS=linux ; export GOARCH=amd64 ; go build -v -o your-finances-auth function.go	
 
       - name: Autenticar no Google Cloud
         uses: google-github-actions/auth@v2
@@ -33,16 +23,26 @@ jobs:
         with:
           project_id: mineral-actor-221820
 
-      - name: Fazer deploy da Cloud Function
+      - name: Configure Docker for Artifact Registry
         run: |
-          gcloud functions deploy your-finances-auth \
-            --gen2 \
+          gcloud auth configure-docker us-central1-docker.pkg.dev    
+
+      - name: Build Docker image
+        run: |
+          docker build -f dockerfile-api -t us-central1-docker.pkg.dev/mineral-actor-221820/your-finances/your-finances-auth:latest .   
+
+      - name: Push Docker image to Artifact Registry
+        run: |
+          docker push us-central1-docker.pkg.dev/mineral-actor-221820/your-finances/your-finances-auth:latest     
+
+      - name: Fazer deploy da Cloud Run
+        run: |
+           gcloud run deploy your-finances-auth-run \
+            --image us-central1-docker.pkg.dev/mineral-actor-221820/your-finances/your-finances-auth:latest \
             --region us-central1 \
-            --runtime go123 \
-            --entry-point RunAuth \
-            --source src/api \
-            --trigger-http \
-            --memory 256MB \
+            --platform managed \
+            --allow-unauthenticated  \
+            --memory 256Mi \
             --cpu 1 \
             --max-instances 3 \
             --concurrency 5 

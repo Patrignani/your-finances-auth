@@ -8,12 +8,20 @@ COPY ./src/api /app/src/api
 # Utilize -ldflags para otimizar o tamanho do binário
 RUN export GO111MODULE=on && cd /app/src/api/cmd && go build -ldflags="-s -w" -o main
 
-# Stage 2: Criar uma imagem menor para a produção
-FROM alpine
+# Stage 2: Criar imagem para execução
+FROM gcr.io/google.com/cloudsdktool/cloud-sdk:slim
 
 WORKDIR /app
 
 # Copie apenas o executável compilado da Stage 1
 COPY --from=builder /app/src/api/cmd/main /app/src/api/cmd/main
 
+# Conceder permissão de execução ao binário
+RUN chmod +x /app/main
+
+# Definir a porta padrão
+ENV PORT=8080
+EXPOSE 8080
+
+# Iniciar a função como um servidor HTTP
 CMD ["/app/src/api/cmd/main"]
