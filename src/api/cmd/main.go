@@ -45,7 +45,7 @@ func main() {
 
 	g := e.Group("check-jwt")
 	g.Use(jwtValidate)
-	g.GET("roles", func(c echo.Context) error {
+	g.GET("/roles", func(c echo.Context) error {
 		id := c.Get("user-id")
 		cid := c.Get("cid")
 		get := c.Get("user")
@@ -66,7 +66,7 @@ func main() {
 		return c.String(http.StatusOK, "Id:"+ID+" roles:"+strings.Join(rolesStr, ",")+" permissions:"+strings.Join(permissionsStr, ","))
 	}, authRouter.RolesMiddleware("1", "5"))
 
-	g.GET("", func(c echo.Context) error {
+	g.GET("/", func(c echo.Context) error {
 		id := c.Get("user-id")
 		cid := c.Get("cid")
 		get := c.Get("user")
