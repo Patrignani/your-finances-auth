@@ -64,7 +64,7 @@ func main() {
 
 		ID := claims["user-id"].(string)
 		return c.String(http.StatusOK, "Id:"+ID+" roles:"+strings.Join(rolesStr, ",")+" permissions:"+strings.Join(permissionsStr, ","))
-	}, authRouter.RolesMiddleware("10", "5"))
+	}, authRouter.RolesMiddleware("1", "5"))
 
 	e.Logger.Fatal(e.Start(":8080"))
 }
