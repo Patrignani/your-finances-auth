@@ -66,7 +66,7 @@ func main() {
 		return c.String(http.StatusOK, "Id:"+ID+" roles:"+strings.Join(rolesStr, ",")+" permissions:"+strings.Join(permissionsStr, ","))
 	}, authRouter.RolesMiddleware("1", "5"))
 
-	g.GET("/", func(c echo.Context) error {
+	g.GET("", func(c echo.Context) error {
 		id := c.Get("user-id")
 		cid := c.Get("cid")
 		get := c.Get("user")
@@ -78,6 +78,10 @@ func main() {
 
 		ID := claims["user-id"].(string)
 		return c.String(http.StatusOK, "Id:"+ID)
+	})
+
+	g.GET("/test", func(c echo.Context) error {
+		return c.String(http.StatusOK, "")
 	})
 
 	e.Logger.Fatal(e.Start(":8080"))
